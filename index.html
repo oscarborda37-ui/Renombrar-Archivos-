@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Renombrador Pro Alfanumérico | Levapan S.A.</title>
+  <meta name="description"
+    content="Herramienta profesional para renombrado masivo de archivos con gestión inteligente de consecutivos alfanuméricos, historial y reversión.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <!-- Fondo decorativo con gradientes suaves y desenfoque -->
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <div class="app-container">
+    <!-- BARRA SUPERIOR DE NAVEGACIÓN Y ESTADO -->
+    <header class="app-header">
+      <div class="brand-section">
+        <div class="brand-logo">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <h1 id="app-title">Renombrador Pro Alfanumérico</h1>
+          <span class="brand-subtitle">Gestión inteligente de archivos & consecutivos secuenciales</span>
+        </div>
+      </div>
+
+      <div class="header-center-status">
+        <div class="folder-badge" id="current-folder-badge" title="Carpeta actualmente abierta">
+          <span class="status-dot disconnected" id="folder-status-dot"></span>
+          <span class="folder-name-text" id="folder-name-display">Ninguna carpeta vinculada</span>
+        </div>
+        <div class="watcher-header-badge" id="header-watcher-badge" style="display:none;"
+          title="Centinela Activo: Los archivos nuevos se renombrarán automáticamente">
+          <span class="pulse-ring"></span>
+          <span class="pulse-core"></span>
+          <span class="watcher-badge-text">Centinela Activo</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Navegación de Pestañas Principales -->
+        <nav class="nav-tabs">
+          <button class="nav-tab active" id="tab-btn-editor" data-target="view-editor">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="9" y1="3" x2="9" y2="21"></line>
+            </svg>
+            Editor Masivo
+          </button>
+          <button class="nav-tab" id="tab-btn-history" data-target="view-history">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 14 14"></polyline>
+            </svg>
+            Historial & Deshacer
+            <span class="badge-counter" id="history-badge-count">0</span>
+          </button>
+          <button class="nav-tab" id="tab-btn-guide" data-target="view-guide">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            Ayuda & Ejemplos
+          </button>
+        </nav>
+
+        <!-- Selector de Tema (Oscuro / Claro) -->
+        <button class="theme-toggle-btn" id="theme-toggle" title="Cambiar tema">
+          <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- RESUMEN DE MÉTRICAS / KPI CARDS -->
+    <section class="kpi-banner">
+      <div class="kpi-card">
+        <div class="kpi-icon icon-blue">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          </svg>
+        </div>
+        <div class="kpi-content">
+          <span class="kpi-label">Archivos Seleccionados</span>
+          <span class="kpi-value" id="kpi-total-files">0</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon icon-purple">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="4 7 4 4 20 4 20 7"></polyline>
+            <line x1="9" y1="20" x2="15" y2="20"></line>
+            <line x1="12" y1="4" x2="12" y2="20"></line>
+          </svg>
+        </div>
+        <div class="kpi-content">
+          <span class="kpi-label">Serial Inicial</span>
+          <span class="kpi-value font-mono" id="kpi-start-serial">LEV-0001</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon icon-emerald">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+            <polyline points="17 6 23 6 23 12"></polyline>
+          </svg>
+        </div>
+        <div class="kpi-content">
+          <span class="kpi-label">Siguiente en Secuencia</span>
+          <span class="kpi-value font-mono" id="kpi-next-serial">LEV-0001</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon icon-amber">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+        </div>
+        <div class="kpi-content">
+          <span class="kpi-label">Estado de Validación</span>
+          <span class="kpi-value status-ok" id="kpi-validation-status">Listo</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA PRINCIPAL 1: EDITOR DE RENOMBRADO -->
+    <main class="view-content active" id="view-editor">
+      <div class="editor-grid">
+        <!-- COLUMNA IZQUIERDA: CONFIGURADOR Y REGLAS -->
+        <aside class="config-sidebar">
+
+          <!-- SECCIÓN 1: SELECCIÓN DE ARCHIVOS / CARPETA -->
+          <div class="glass-panel" id="panel-source">
+            <div class="panel-header">
+              <span class="step-badge">1</span>
+              <h2>Seleccionar Archivos</h2>
+            </div>
+
+            <div class="source-action-group">
+              <!-- TARJETA DE CARPETA RECORDADA PREVIAMENTE -->
+              <div class="remembered-folder-card" id="remembered-folder-card" style="display:none;">
+                <div class="remembered-header">
+                  <span class="remembered-label">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                      <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                      <polyline points="7 3 7 8 15 8"></polyline>
+                    </svg>
+                    Carpeta anterior recordada
+                  </span>
+                  <button type="button" class="btn-text-muted" id="btn-forget-folder"
+                    title="Olvidar esta carpeta de la memoria">Olvidar</button>
+                </div>
+                <div class="remembered-body">
+                  <div class="remembered-folder-name" id="remembered-folder-name">--</div>
+                  <button type="button" class="btn btn-sm btn-accent" id="btn-reconnect-folder">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="23 4 23 10 17 10"></polyline>
+                      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                    </svg>
+                    Reconectar Carpeta
+                  </button>
+                </div>
+              </div>
+
+              <button class="btn btn-primary btn-block" id="btn-open-folder"
+                title="Selecciona una carpeta para renombrar archivos directamente en disco">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
+                Abrir Nueva Carpeta en Disco
+              </button>
+
+              <div class="dropzone-area" id="dropzone">
+                <input type="file" id="file-input-manual" multiple style="display:none;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <p>O arrastra archivos o carpetas aquí</p>
+                <button type="button" class="btn-text-link" id="btn-browse-files">Explorar archivos sueltos</button>
+              </div>
+            </div>
+
+            <!-- TARJETA MODO CENTINELA (AUTO-RENOMBRADO EN TIEMPO REAL) -->
+            <div class="auto-watcher-card" id="card-auto-watcher">
+              <div class="watcher-card-header">
+                <div class="watcher-title-group">
+                  <div class="watcher-icon-wrap" id="watcher-icon-pulse">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                  </div>
+                  <div>
+                    <strong class="watcher-title">Auto-Renombrar Archivos Nuevos</strong>
+                    <span class="watcher-subtitle">Modo Centinela en tiempo real</span>
+                  </div>
+                </div>
+                <label class="switch" title="Activar/Desactivar vigilancia y auto-renombrado">
+                  <input type="checkbox" id="toggle-auto-rename">
+                  <span class="slider round"></span>
+                </label>
+              </div>
+              <div class="watcher-status-row">
+                <span class="watcher-status-text" id="watcher-status-text">Inactivo (esperando activación)</span>
+                <span class="badge-status-pulse" id="watcher-badge-pulse" style="display:none;">
+                  <span class="pulse-dot"></span> EN VIVO
+                </span>
+              </div>
+              <small class="watcher-explanation">Al activarse, cualquier archivo nuevo copiado o arrastrado a la carpeta
+                se renombrará al instante siguiendo el serial.</small>
+            </div>
+
+            <!-- FILTRO RÁPIDO DE EXTENSIÓN Y ORDEN -->
+            <div class="filter-row">
+              <div class="form-group flex-1">
+                <label for="filter-extension">Filtro de Extensión</label>
+                <select id="filter-extension" class="form-control">
+                  <option value="ALL">Todos los tipos (*.*)</option>
+                  <option value="pdf">Solo PDF (.pdf)</option>
+                  <option value="xlsx,xls,csv">Hojas de cálculo (Excel / CSV)</option>
+                  <option value="docx,doc,txt">Documentos de texto</option>
+                  <option value="jpg,jpeg,png,webp">Imágenes (.jpg, .png)</option>
+                  <option value="zip,rar,7z">Archivos Comprimidos</option>
+                </select>
+              </div>
+
+              <div class="form-group flex-1">
+                <label for="sort-order">Ordenar por</label>
+                <select id="sort-order" class="form-control">
+                  <option value="name_asc">Nombre Original (A - Z)</option>
+                  <option value="name_desc">Nombre Original (Z - A)</option>
+                  <option value="date_asc">Fecha: Más antiguos primero</option>
+                  <option value="date_desc">Fecha: Más recientes primero</option>
+                  <option value="size_asc">Tamaño: Menor a mayor</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECCIÓN 2: ADMINISTRACIÓN Y DETECCIÓN INTELIGENTE DEL SERIAL -->
+          <div class="glass-panel" id="panel-serial">
+            <div class="panel-header">
+              <span class="step-badge">2</span>
+              <h2>Serial Alfanumérico & Memoria</h2>
+            </div>
+
+            <!-- BANNER DE DETECCIÓN INTELIGENTE DE ARCHIVOS EXISTENTES -->
+            <div class="smart-detection-banner" id="detection-banner" style="display:none;">
+              <div class="banner-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path
+                    d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83">
+                  </path>
+                </svg>
+              </div>
+              <div class="banner-content">
+                <strong>Consecutivo Existente Detectado</strong>
+                <p id="detection-banner-text">Se encontraron archivos con el serial más alto: <span
+                    class="detected-token" id="detected-token-val">LEV-0042</span></p>
+                <button type="button" class="btn btn-sm btn-accent" id="btn-apply-detected-serial">
+                  Continuar desde <span id="detected-next-val">LEV-0043</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- CONFIGURACIÓN DEL SERIAL -->
+            <div class="form-group">
+              <div class="label-with-tip">
+                <label for="input-start-serial">Serial de Partida (Libre / Editable)</label>
+                <span class="tip-text">Define el valor inicial del contador</span>
+              </div>
+              <div class="input-with-button">
+                <input type="text" id="input-start-serial" class="form-control font-mono" value="LEV-0001"
+                  placeholder="Ej: LEV-0001, A001, FAC-2024-001">
+                <button type="button" class="btn-icon-addon" id="btn-reset-serial"
+                  title="Reiniciar al serial memorizado">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="1 4 1 10 7 10"></polyline>
+                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                  </svg>
+                </button>
+              </div>
+              <small class="field-hint">Acepta letras, números, guiones y cualquier formato corporativo.</small>
+            </div>
+
+            <!-- TIPO DE INCREMENTO -->
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="select-increment-mode">Tipo de Secuencia</label>
+                <select id="select-increment-mode" class="form-control">
+                  <option value="smart_numeric" selected>Numérico Inteligente (Ej: A099 → A100)</option>
+                  <option value="pure_alphanumeric">Alfanumérico Base-36 (0-9, A-Z: 09 → 0A)</option>
+                  <option value="alphabetical">Alfabético Puro (A → B ... Z → AA)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="input-serial-step">Paso / Incremento</label>
+                <input type="number" id="input-serial-step" class="form-control" value="1" min="1" max="100">
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="input-min-digits">Relleno de Ceros</label>
+                <select id="input-min-digits" class="form-control">
+                  <option value="auto">Automático (según serial inicial)</option>
+                  <option value="2">2 dígitos (01, 02...)</option>
+                  <option value="3">3 dígitos (001, 002...)</option>
+                  <option value="4">4 dígitos (0001, 0002...)</option>
+                  <option value="5">5 dígitos (00001...)</option>
+                  <option value="6">6 dígitos (000001...)</option>
+                  <option value="0">Sin ceros a la izquierda (1, 2...)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="memory-persistence-toggle">Memoria de Consecutivo</label>
+                <div class="checkbox-toggle-wrapper">
+                  <label class="switch">
+                    <input type="checkbox" id="memory-persistence-toggle" checked>
+                    <span class="slider round"></span>
+                  </label>
+                  <span class="switch-label">Recordar último serial</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECCIÓN 3: PATRÓN DE RENOMBRADO Y VARIABLES -->
+          <div class="glass-panel" id="panel-pattern">
+            <div class="panel-header">
+              <span class="step-badge">3</span>
+              <h2>Patrón de Renombrado</h2>
+            </div>
+
+            <div class="form-group">
+              <label for="input-pattern">Estructura del Nuevo Nombre</label>
+              <input type="text" id="input-pattern" class="form-control font-mono" value="{SERIAL}_{ORIGINAL}"
+                placeholder="{SERIAL}_{ORIGINAL}">
+              <div class="tag-chips-container">
+                <span class="tag-chip" data-tag="{SERIAL}" title="Inserta el consecutivo alfanumérico">+ {SERIAL}</span>
+                <span class="tag-chip" data-tag="{ORIGINAL}" title="Inserta el nombre original del archivo">+
+                  {ORIGINAL}</span>
+                <span class="tag-chip" data-tag="{EXT}" title="Extensión del archivo con punto">+ {EXT}</span>
+                <span class="tag-chip" data-tag="{FECHA}" title="Fecha actual (YYYY-MM-DD)">+ {FECHA}</span>
+                <span class="tag-chip" data-tag="{HORA}" title="Hora actual (HHMMSS)">+ {HORA}</span>
+                <span class="tag-chip" data-tag="{INDICE}" title="Número secuencial 1, 2, 3...">+ {INDICE}</span>
+              </div>
+            </div>
+
+            <!-- TRANSFORMACIONES DE TEXTO -->
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="select-case-transform">Mayúsculas / Minúsculas</label>
+                <select id="select-case-transform" class="form-control">
+                  <option value="none">Sin cambio (Respetar original)</option>
+                  <option value="upper">TODO MAYÚSCULAS</option>
+                  <option value="lower">todo minúsculas</option>
+                  <option value="title">Modo Título (Primeras Mayúsculas)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="select-space-transform">Manejo de Espacios</label>
+                <select id="select-space-transform" class="form-control">
+                  <option value="none">Conservar espacios</option>
+                  <option value="underscore" selected>Reemplazar por guión bajo (_)</option>
+                  <option value="hyphen">Reemplazar por guión medio (-)</option>
+                  <option value="remove">Eliminar espacios</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- PREFIJO / SUFIJO EXTRA -->
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="input-extra-prefix">Prefijo Fijo (Opcional)</label>
+                <input type="text" id="input-extra-prefix" class="form-control" placeholder="Ej: LEV_">
+              </div>
+              <div class="form-group">
+                <label for="input-extra-suffix">Sufijo Fijo (Opcional)</label>
+                <input type="text" id="input-extra-suffix" class="form-control" placeholder="Ej: _FINAL">
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- COLUMNA DERECHA: TABLA DE VISTA PREVIA Y ACCIONES -->
+        <section class="preview-section glass-panel">
+          <div class="preview-toolbar">
+            <div class="toolbar-title-area">
+              <h2>Vista Previa en Tiempo Real</h2>
+              <span class="preview-counter-badge" id="preview-items-count">0 archivos</span>
+            </div>
+
+            <div class="toolbar-actions">
+              <div class="search-input-wrapper">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="preview-search" placeholder="Buscar archivo...">
+              </div>
+
+              <button class="btn btn-sm btn-secondary" id="btn-select-all" title="Marcar/Desmarcar todos">
+                Seleccionar Todos
+              </button>
+              <button class="btn btn-sm btn-secondary" id="btn-clear-table" title="Vaciar lista">
+                Limpiar
+              </button>
+            </div>
+          </div>
+
+          <!-- TABLA DE ARCHIVOS -->
+          <div class="table-container">
+            <table class="preview-table" id="preview-table">
+              <thead>
+                <tr>
+                  <th class="col-check">
+                    <input type="checkbox" id="check-master" checked title="Seleccionar todos">
+                  </th>
+                  <th class="col-num">#</th>
+                  <th class="col-original">Nombre Original</th>
+                  <th class="col-arrow"></th>
+                  <th class="col-new">Nuevo Nombre Propuesto</th>
+                  <th class="col-serial">Serial Asignado</th>
+                  <th class="col-size">Tamaño</th>
+                  <th class="col-status">Estado</th>
+                </tr>
+              </thead>
+              <tbody id="preview-tbody">
+                <!-- Estado vacío por defecto -->
+                <tr class="empty-state-row">
+                  <td colspan="8">
+                    <div class="empty-state-message">
+                      <div class="empty-icon">📂</div>
+                      <h3>No hay archivos cargados para renombrar</h3>
+                      <p>Haz clic en <strong>"Abrir Carpeta en Disco"</strong> o arrastra archivos para ver la vista
+                        previa en vivo y el consecutivo que les corresponde.</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- BARRA DE PROGRESO DE RENOMBRADO -->
+          <div class="progress-container" id="progress-wrapper" style="display:none;">
+            <div class="progress-info">
+              <span id="progress-status-text">Procesando archivos...</span>
+              <span id="progress-percentage">0%</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" id="progress-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- PANEL DE ACCIÓN Y EJECUCIÓN INFERIOR -->
+          <div class="action-footer">
+            <div class="footer-alert" id="footer-validation-msg">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <span id="validation-text">Listo para procesar cambios.</span>
+            </div>
+
+            <div class="footer-buttons">
+              <!-- Botón secundario para exportar script de respaldo -->
+              <button class="btn btn-secondary" id="btn-export-script"
+                title="Descarga un script .bat o .ps1 para ejecutar el renombramiento si lo deseas fuera del navegador">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Exportar Script (.bat/.ps1)
+              </button>
+
+              <!-- Botón Principal Prominente -->
+              <button class="btn btn-success btn-lg" id="btn-execute-rename" disabled>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span id="btn-rename-label">Renombrar Archivos</span>
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- VISTA PRINCIPAL 2: HISTORIAL Y REVERSIÓN (UNDO) -->
+    <section class="view-content" id="view-history" style="display:none;">
+      <div class="glass-panel history-panel">
+        <div class="history-header">
+          <div>
+            <h2>Historial de Renombramientos y Auditoría</h2>
+            <p>Registro completo de todos los lotes ejecutados, con opción de revertir nombres (Undo) en cualquier
+              momento.</p>
+          </div>
+          <div class="history-actions">
+            <button class="btn btn-secondary btn-sm" id="btn-export-history-csv">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Descargar CSV
+            </button>
+            <button class="btn btn-danger-outline btn-sm" id="btn-clear-history">
+              Limpiar Historial
+            </button>
+          </div>
+        </div>
+
+        <div class="history-list" id="history-batches-container">
+          <!-- Renderizado dinámico de lotes -->
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA PRINCIPAL 3: GUÍA Y EJEMPLOS DE USO -->
+    <section class="view-content" id="view-guide" style="display:none;">
+      <div class="glass-panel guide-panel">
+        <h2>Guía Rápida & Casos de Uso Empresariales</h2>
+        <p class="guide-subtitle">Aprende a aprovechar al máximo los patrones alfanuméricos y la administración de
+          consecutivos para Levapan S.A.</p>
+
+        <div class="guide-cards-grid">
+          <div class="guide-card">
+            <div class="guide-card-header">
+              <span class="guide-pill">Facturas & Cuentas</span>
+              <h3>Facturación Consecutiva</h3>
+            </div>
+            <p>Ideal para nombrar facturas electrónicas o soportes contables ordenados cronológicamente.</p>
+            <div class="code-example">
+              <strong>Serial Inicial:</strong> <code>FAC-0001</code><br>
+              <strong>Patrón:</strong> <code>{SERIAL}_{ORIGINAL}</code><br>
+              <strong>Resultado:</strong> <code>FAC-0001_Recibo_Luz.pdf</code>, <code>FAC-0002_Cuenta_Cobro.pdf</code>
+            </div>
+          </div>
+
+          <div class="guide-card">
+            <div class="guide-card-header">
+              <span class="guide-pill">Producción & Lotes</span>
+              <h3>Lotes de Fabricación Alfanuméricos</h3>
+            </div>
+            <p>Para reportes de laboratorio o fichas de control de calidad con serie de letras y números.</p>
+            <div class="code-example">
+              <strong>Serial Inicial:</strong> <code>LEV-LOTE-A01</code><br>
+              <strong>Patrón:</strong> <code>{SERIAL}_{FECHA}</code><br>
+              <strong>Resultado:</strong> <code>LEV-LOTE-A01_2026-10-29.xlsx</code>,
+              <code>LEV-LOTE-A02_2026-10-29.xlsx</code>
+            </div>
+          </div>
+
+          <div class="guide-card">
+            <div class="guide-card-header">
+              <span class="guide-pill">Documentos RRHH / Jurídico</span>
+              <h3>Expedientes de Personal o Archivo</h3>
+            </div>
+            <p>Guarda el número de expediente con el nombre del empleado normalizado.</p>
+            <div class="code-example">
+              <strong>Serial Inicial:</strong> <code>EXP-2024-0010</code><br>
+              <strong>Patrón:</strong> <code>{SERIAL}_{ORIGINAL}</code> (Espacios a guión bajo)<br>
+              <strong>Resultado:</strong> <code>EXP-2024-0010_Oscar_Borda.pdf</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-section">
+          <h3>¿Cómo funciona la memoria de consecutivos para archivos nuevos?</h3>
+          <p>La herramienta ofrece dos capas inteligentes de administración:</p>
+          <ul>
+            <li><strong>Detección en la carpeta:</strong> Cada vez que abres una carpeta donde ya existen archivos
+              renombrados con tu serie (ej. <code>FAC-0045.pdf</code>), la herramienta detecta automáticamente cuál es
+              el número más alto y sugiere continuar desde <code>FAC-0046</code> sin que tengas que buscarlo
+              manualmente.</li>
+            <li><strong>Registro centralizado:</strong> Cada operación exitosa se guarda en la memoria local y en
+              <code>historial_seriales.json</code>, lo que garantiza que nunca se repita un serial por equivocación.
+            </li>
+            <li><strong>Deshacer (Undo):</strong> Si renombras una tanda y necesitas volver atrás, la pestaña
+              <em>Historial & Deshacer</em> te permite revertir los nombres a sus valores originales con un solo clic.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODAL DE CONFIRMACIÓN DE SEGURIDAD -->
+    <div class="modal-backdrop" id="confirm-modal" style="display:none;">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-icon warning">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </div>
+          <div>
+            <h3>¿Confirmar renombramiento masivo?</h3>
+            <p>Estás a punto de renombrar <strong id="modal-count">0</strong> archivos en la carpeta de trabajo.</p>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="modal-summary-box">
+            <div><strong>Primer nuevo nombre:</strong> <span class="font-mono text-accent"
+                id="modal-first-name">--</span></div>
+            <div><strong>Último nuevo nombre:</strong> <span class="font-mono text-accent"
+                id="modal-last-name">--</span></div>
+          </div>
+          <p class="modal-note">Nota: Podrás revertir los cambios desde la pestaña de Historial si lo necesitas.</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="modal-btn-cancel">Cancelar</button>
+          <button class="btn btn-success" id="modal-btn-confirm">Sí, Renombrar Archivos</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST NOTIFICACIÓN -->
+    <div class="toast-notification" id="toast-notification">
+      <span class="toast-icon" id="toast-icon">✓</span>
+      <span class="toast-message" id="toast-message">Operación completada con éxito</span>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
