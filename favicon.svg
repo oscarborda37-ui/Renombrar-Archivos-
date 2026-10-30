@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="levapan-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="50%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Contenedor moderno con bordes redondeados y gradiente -->
+  <rect width="64" height="64" rx="16" fill="url(#levapan-grad)" filter="url(#glow)"/>
+
+  <!-- Silueta de archivo -->
+  <path d="M20 13H36L46 23V49C46 51.2091 44.2091 53 42 53H20C17.7909 53 16 51.2091 16 49V17C16 14.7909 17.7909 13 20 13Z" fill="white" fill-opacity="0.15" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M36 13V23H46" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- Flecha de renombramiento secuencial dinámico -->
+  <path d="M23 34H39" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+  <path d="M34 29L39 34L34 39" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Indicador secuencial alfanumérico -->
+  <circle cx="24" cy="45" r="2" fill="#e0f2fe"/>
+  <circle cx="31" cy="45" r="2" fill="#bae6fd"/>
+  <circle cx="38" cy="45" r="2" fill="#7dd3fc"/>
+</svg>
+
